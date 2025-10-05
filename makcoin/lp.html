@@ -1,0 +1,2205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAK Tap-to-Earn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Global Styles */
+        :root {
+            --primary-bg: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --secondary-bg: rgba(18, 18, 36, 0.8);
+            --card-bg: rgba(30, 30, 60, 0.6);
+            --card-bg-hover: rgba(40, 40, 80, 0.8);
+            --primary-text: #FFFFFF;
+            --secondary-text: #a0a0e0;
+            --accent-gold: #FFD700;
+            --accent-green: #00FFAA;
+            --accent-blue: #4A90E2;
+            --accent-purple: #9B59B6;
+            --accent-cyan: #00FFFF;
+            --accent-red: #FF6B6B;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --glow: 0 0 20px rgba(255, 215, 0, 0.7);
+            --glow-green: 0 0 20px rgba(0, 255, 170, 0.7);
+            --glow-blue: 0 0 20px rgba(74, 144, 226, 0.7);
+            --border-radius: 20px;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--primary-bg);
+            color: var(--primary-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(0, 255, 170, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: rgba(10, 10, 25, 0.7);
+            padding: 15px 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--accent-gold), var(--accent-green), var(--accent-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+            color: var(--accent-gold);
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .wallet-display {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .coin-balance, .usd-balance {
+            background-color: var(--card-bg);
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coin-balance::before, .usd-balance::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .coin-balance:hover::before, .usd-balance:hover::before {
+            left: 100%;
+        }
+
+        .coin-balance {
+            color: var(--accent-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .usd-balance {
+            color: var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 255, 170, 0.3);
+        }
+
+        /* Navigation Styles */
+        .nav-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(10, 10, 25, 0.8);
+            padding: 15px 0;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+        }
+
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 12px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--secondary-text);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(0, 255, 170, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .nav-tab.active {
+            color: var(--accent-gold);
+            background-color: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .nav-tab.active::before {
+            opacity: 1;
+        }
+
+        .nav-tab i {
+            font-size: 1.3rem;
+            transition: var(--transition);
+        }
+
+        .nav-tab.active i {
+            transform: translateY(-5px);
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
+        }
+
+        .nav-tab span {
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-tab.active span {
+            transform: translateY(2px);
+        }
+
+        /* Main Content Styles */
+        main {
+            flex: 1;
+            padding: 20px 0 100px;
+            overflow-y: auto;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Tab Styles */
+        .home-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            padding: 20px 0;
+        }
+
+        .tap-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 20px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            min-width: 160px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            background-color: var(--card-bg-hover);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--accent-gold), var(--accent-green));
+        }
+
+        .stat-card h3 {
+            font-size: 1rem;
+            color: var(--secondary-text);
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .tap-circle-container {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .tap-circle {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-green), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--glow), 0 0 50px rgba(255, 215, 0, 0.5);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            position: relative;
+            overflow: hidden;
+            animation: pulse 3s infinite;
+        }
+
+        .tap-circle::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-green), var(--accent-cyan));
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.7;
+            animation: pulse 3s infinite;
+            filter: blur(20px);
+        }
+
+        .tap-circle::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.3) 100%);
+            border-radius: 50%;
+        }
+
+        .tap-circle:active {
+            transform: scale(0.95);
+        }
+
+        .tap-circle h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #0f0c29;
+            z-index: 2;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: var(--glow), 0 0 50px rgba(255, 215, 0, 0.5); }
+            50% { transform: scale(1.05); box-shadow: var(--glow), 0 0 70px rgba(255, 215, 0, 0.7); }
+            100% { transform: scale(1); box-shadow: var(--glow), 0 0 50px rgba(255, 215, 0, 0.5); }
+        }
+
+        .coin-animation {
+            position: absolute;
+            color: var(--accent-gold);
+            font-weight: bold;
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            z-index: 10;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
+        }
+
+        /* Tasks Tab Styles */
+        .tasks-content {
+            padding: 20px 0;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--accent-gold), transparent);
+        }
+
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .task-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--accent-gold), var(--accent-green));
+        }
+
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            background-color: var(--card-bg-hover);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .task-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .task-reward {
+            color: var(--accent-gold);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 8px 15px;
+            border-radius: 50px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .task-body {
+            margin-bottom: 20px;
+        }
+
+        .task-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            margin-bottom: 15px;
+            padding: 10px 20px;
+            background-color: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: var(--transition);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .task-link:hover {
+            background-color: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+        }
+
+        .code-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .code-input {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(10, 10, 25, 0.5);
+            color: var(--primary-text);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .code-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--accent-green), var(--accent-cyan));
+            color: #0f0c29;
+            box-shadow: 0 0 15px rgba(0, 255, 170, 0.5);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 255, 170, 0.7);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+            color: white;
+            box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(74, 144, 226, 0.7);
+        }
+
+        .btn-disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Power Tab Styles */
+        .power-content {
+            padding: 20px 0;
+        }
+
+        .upgrades-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .upgrade-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .upgrade-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(0, 255, 170, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .upgrade-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            background-color: var(--card-bg-hover);
+        }
+
+        .upgrade-card:hover::before {
+            opacity: 1;
+        }
+
+        .upgrade-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .upgrade-icon {
+            font-size: 1.8rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+        }
+
+        .upgrade-card:hover .upgrade-icon {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .silver .upgrade-icon {
+            background: linear-gradient(135deg, #C0C0C0, #E8E8E8);
+            color: #1F1F1F;
+        }
+
+        .gold .upgrade-icon {
+            background: linear-gradient(135deg, var(--accent-gold), #FFEC8B);
+            color: #1F1F1F;
+        }
+
+        .platinum .upgrade-icon {
+            background: linear-gradient(135deg, #E5E4E2, #FFFFFF);
+            color: #1F1F1F;
+        }
+
+        .upgrade-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .upgrade-benefits {
+            color: var(--secondary-text);
+            line-height: 1.6;
+        }
+
+        .upgrade-cost {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-gold);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .upgrade-btn {
+            padding: 15px;
+            background: linear-gradient(to right, var(--accent-gold), var(--accent-green));
+            color: #0f0c29;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upgrade-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .upgrade-btn:hover::before {
+            left: 100%;
+        }
+
+        .upgrade-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.7);
+        }
+
+        .upgrade-btn:disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .upgrade-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Lottery Tab Styles */
+        .lottery-content {
+            padding: 20px 0;
+        }
+
+        .lottery-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .lottery-title {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: var(--accent-gold);
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.7);
+        }
+
+        .lottery-subtitle {
+            color: var(--secondary-text);
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+        }
+
+        .countdown-timer {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.7);
+            padding: 15px 30px;
+            background: rgba(0, 255, 170, 0.1);
+            border-radius: 50px;
+            display: inline-block;
+            box-shadow: 0 0 15px rgba(0, 255, 170, 0.3);
+        }
+
+        .lottery-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .ticket-purchase {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .ticket-purchase:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            background-color: var(--card-bg-hover);
+        }
+
+        .ticket-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ticket-cost {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-gold);
+            font-size: 1.1rem;
+        }
+
+        .ticket-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .ticket-count {
+            font-size: 1.5rem;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
+            color: var(--accent-cyan);
+        }
+
+        .ticket-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: var(--transition);
+            box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
+        }
+
+        .ticket-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(74, 144, 226, 0.7);
+        }
+
+        .ticket-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .ticket-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .buy-tickets-btn {
+            padding: 18px 40px;
+            background: linear-gradient(to right, var(--accent-gold), var(--accent-green));
+            color: #0f0c29;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .buy-tickets-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .buy-tickets-btn:hover::before {
+            left: 100%;
+        }
+
+        .buy-tickets-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.7);
+        }
+
+        .buy-tickets-btn:disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tickets-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .ticket-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ticket-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(0, 255, 170, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .ticket-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            background-color: var(--card-bg-hover);
+        }
+
+        .ticket-card:hover::before {
+            opacity: 1;
+        }
+
+        .ticket-card.winner {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-green));
+            color: #0f0c29;
+            animation: glow 2s infinite;
+            transform: scale(1.05);
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 10px var(--accent-gold); }
+            50% { box-shadow: 0 0 30px var(--accent-gold); }
+            100% { box-shadow: 0 0 10px var(--accent-gold); }
+        }
+
+        .ticket-id {
+            font-family: monospace;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        /* Wallet Tab Styles */
+        .wallet-content {
+            padding: 20px 0;
+        }
+
+        .wallet-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .wallet-card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wallet-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--accent-gold), var(--accent-green));
+        }
+
+        .wallet-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            background-color: var(--card-bg-hover);
+        }
+
+        .wallet-card h3 {
+            font-size: 1.2rem;
+            color: var(--secondary-text);
+            margin-bottom: 15px;
+        }
+
+        .wallet-card p {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .wallet-card.coins p {
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .wallet-card.usd p {
+            color: var(--accent-green);
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
+        }
+
+        .transactions {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .transactions h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .transaction-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .transaction-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .transaction-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .transaction-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--accent-gold), var(--accent-green));
+            border-radius: 10px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .transaction-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 10px;
+            border-radius: 10px;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-details {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .transaction-type {
+            font-weight: 600;
+        }
+
+        .transaction-date {
+            font-size: 0.9rem;
+            color: var(--secondary-text);
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+        }
+
+        .transaction-amount.positive {
+            color: var(--accent-green);
+        }
+
+        .transaction-amount.negative {
+            color: var(--accent-red);
+        }
+
+        .withdraw-section {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .withdraw-btn {
+            padding: 18px 50px;
+            background: linear-gradient(to right, var(--accent-gold), var(--accent-green));
+            color: #0f0c29;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .withdraw-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .withdraw-btn:hover::before {
+            left: 100%;
+        }
+
+        .withdraw-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.7);
+        }
+
+        /* Confetti Animation */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-gold);
+            opacity: 0;
+        }
+
+        /* Particles Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive Styles */
+        @media (min-width: 768px) {
+            .nav-container {
+                position: static;
+                background: transparent;
+                box-shadow: none;
+                padding: 0;
+                margin-top: 20px;
+            }
+
+            .nav-tabs {
+                justify-content: flex-start;
+                gap: 20px;
+            }
+
+            .nav-tab {
+                flex-direction: row;
+                padding: 15px 25px;
+            }
+
+            main {
+                padding: 20px 0;
+            }
+
+            .tap-circle {
+                width: 300px;
+                height: 300px;
+            }
+
+            .tap-circle h2 {
+                font-size: 3.5rem;
+            }
+
+            .lottery-controls {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .wallet-display {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .tap-stats {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .stat-card {
+                width: 100%;
+            }
+
+            .task-actions {
+                flex-direction: column;
+            }
+
+            .upgrades-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ticket-purchase {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+
+            .ticket-controls {
+                align-self: center;
+            }
+
+            .wallet-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-coins logo-icon"></i>
+                    <h1>MAK Tap-to-Earn</h1>
+                </div>
+                <div class="wallet-display">
+                    <div class="coin-balance">
+                        <i class="fas fa-coins"></i>
+                        <span id="coin-balance">0</span>
+                    </div>
+                    <div class="usd-balance">
+                        <i class="fas fa-dollar-sign"></i>
+                        <span id="usd-balance">$0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Home Tab -->
+        <section id="home-tab" class="tab-content active">
+            <div class="home-content">
+                <div class="tap-stats">
+                    <div class="stat-card">
+                        <h3>Tap Power</h3>
+                        <p id="tap-power">1</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Taps Remaining</h3>
+                        <p id="taps-remaining">100</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Taps</h3>
+                        <p id="total-taps">0</p>
+                    </div>
+                </div>
+                <div class="tap-circle-container">
+                    <div class="tap-circle" id="tap-circle">
+                        <h2>MAK</h2>
+                    </div>
+                </div>
+                <div class="tap-stats">
+                    <div class="stat-card">
+                        <h3>Coins Per Tap</h3>
+                        <p id="coins-per-tap">10</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Next Reset</h3>
+                        <p id="reset-timer">02:00:00</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tasks Tab -->
+        <section id="tasks-tab" class="tab-content">
+            <div class="tasks-content">
+                <h2 class="section-title">Daily Tasks</h2>
+                <div class="tasks-list" id="tasks-list">
+                    <!-- Tasks will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Power Tab -->
+        <section id="power-tab" class="tab-content">
+            <div class="power-content">
+                <h2 class="section-title">Upgrade Your Power</h2>
+                <div class="upgrades-grid" id="upgrades-grid">
+                    <!-- Upgrades will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Lottery Tab -->
+        <section id="lottery-tab" class="tab-content">
+            <div class="lottery-content">
+                <div class="lottery-header">
+                    <h2 class="lottery-title">MAK Lottery</h2>
+                    <p class="lottery-subtitle">Win $100 Every 24 Hours!</p>
+                    <div class="countdown-timer" id="countdown-timer">Next draw in 24:00:00</div>
+                </div>
+                <div class="lottery-controls">
+                    <div class="ticket-purchase">
+                        <div class="ticket-info">
+                            <h3>Buy Lottery Tickets</h3>
+                            <div class="ticket-cost">
+                                <i class="fas fa-coins"></i>
+                                <span>10,000 coins per ticket</span>
+                            </div>
+                        </div>
+                        <div class="ticket-controls">
+                            <button class="ticket-btn" id="decrease-tickets">-</button>
+                            <div class="ticket-count" id="ticket-count">1</div>
+                            <button class="ticket-btn" id="increase-tickets">+</button>
+                        </div>
+                    </div>
+                    <button class="buy-tickets-btn" id="buy-tickets-btn">Buy Tickets</button>
+                </div>
+                <h3 class="section-title">Your Tickets</h3>
+                <div class="tickets-list" id="tickets-list">
+                    <!-- Tickets will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Wallet Tab -->
+        <section id="wallet-tab" class="tab-content">
+            <div class="wallet-content">
+                <div class="wallet-summary">
+                    <div class="wallet-card coins">
+                        <h3>Total Coins</h3>
+                        <p id="wallet-coins">0</p>
+                    </div>
+                    <div class="wallet-card usd">
+                        <h3>USD Equivalent</h3>
+                        <p id="wallet-usd">$0.00</p>
+                    </div>
+                </div>
+                <div class="transactions">
+                    <h3>Recent Transactions</h3>
+                    <div class="transaction-list" id="transaction-list">
+                        <!-- Transactions will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="withdraw-section">
+                    <button class="withdraw-btn">Withdraw Funds</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="nav-container">
+        <div class="container">
+            <ul class="nav-tabs">
+                <li class="nav-tab active" data-tab="home-tab">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </li>
+                <li class="nav-tab" data-tab="tasks-tab">
+                    <i class="fas fa-tasks"></i>
+                    <span>Tasks</span>
+                </li>
+                <li class="nav-tab" data-tab="power-tab">
+                    <i class="fas fa-bolt"></i>
+                    <span>Power</span>
+                </li>
+                <li class="nav-tab" data-tab="lottery-tab">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Lottery</span>
+                </li>
+                <li class="nav-tab" data-tab="wallet-tab">
+                    <i class="fas fa-wallet"></i>
+                    <span>Wallet</span>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Confetti Container -->
+    <div class="confetti-container" id="confetti-container"></div>
+
+    <script>
+        // Game Data and State
+        const gameState = {
+            coins: 0,
+            tapPower: 1,
+            tapsRemaining: 100,
+            totalTaps: 0,
+            coinsPerTap: 10,
+            lastReset: Date.now(),
+            upgrades: {
+                silver: false,
+                gold: false,
+                platinum: false
+            },
+            claimedTasks: [],
+            completedTasks: [],
+            lotteryTickets: [],
+            lastLotteryDraw: Date.now(),
+            transactions: []
+        };
+
+        // Daily Tasks
+        const dailyTasks = [
+            { 
+                id: 1,
+                title: "Watch MAK Video 1", 
+                link: "https://youtube.com/watch?v=dQw4w9WgXcQ", 
+                code: "MAK100", 
+                reward: 10000,
+                claimed: false,
+                completed: false
+            },
+            { 
+                id: 2,
+                title: "Watch MAK Video 2", 
+                link: "https://youtube.com/watch?v=dQw4w9WgXcQ", 
+                code: "MAK200", 
+                reward: 10000,
+                claimed: false,
+                completed: false
+            },
+            { 
+                id: 3,
+                title: "Follow on Twitter", 
+                link: "https://twitter.com/mak", 
+                code: "MAKFOLLOW", 
+                reward: 5000,
+                claimed: false,
+                completed: false
+            },
+            { 
+                id: 4,
+                title: "Join Telegram Channel", 
+                link: "https://t.me/mak", 
+                code: "MAKTELE", 
+                reward: 8000,
+                claimed: false,
+                completed: false
+            },
+            { 
+                id: 5,
+                title: "Invite Friends", 
+                link: "#", 
+                code: "MAKFRIENDS", 
+                reward: 40000,
+                claimed: false,
+                completed: false
+            }
+        ];
+
+        // Upgrades
+        const upgrades = [
+            {
+                id: 'silver',
+                title: 'Silver Upgrade',
+                icon: 'fas fa-medal',
+                benefits: '+2,000 daily tap limit',
+                cost: 50000,
+                tapLimitIncrease: 2000
+            },
+            {
+                id: 'gold',
+                title: 'Gold Upgrade',
+                icon: 'fas fa-crown',
+                benefits: '+5,000 daily tap limit',
+                cost: 150000,
+                tapLimitIncrease: 5000
+            },
+            {
+                id: 'platinum',
+                title: 'Platinum Upgrade',
+                icon: 'fas fa-gem',
+                benefits: '+10,000 daily tap limit',
+                cost: 300000,
+                tapLimitIncrease: 10000
+            }
+        ];
+
+        // DOM Elements
+        const tapCircle = document.getElementById('tap-circle');
+        const coinBalance = document.getElementById('coin-balance');
+        const usdBalance = document.getElementById('usd-balance');
+        const tapPower = document.getElementById('tap-power');
+        const tapsRemaining = document.getElementById('taps-remaining');
+        const totalTaps = document.getElementById('total-taps');
+        const coinsPerTap = document.getElementById('coins-per-tap');
+        const resetTimer = document.getElementById('reset-timer');
+        const tasksList = document.getElementById('tasks-list');
+        const upgradesGrid = document.getElementById('upgrades-grid');
+        const countdownTimer = document.getElementById('countdown-timer');
+        const ticketCount = document.getElementById('ticket-count');
+        const decreaseTickets = document.getElementById('decrease-tickets');
+        const increaseTickets = document.getElementById('increase-tickets');
+        const buyTicketsBtn = document.getElementById('buy-tickets-btn');
+        const ticketsList = document.getElementById('tickets-list');
+        const walletCoins = document.getElementById('wallet-coins');
+        const walletUsd = document.getElementById('wallet-usd');
+        const transactionList = document.getElementById('transaction-list');
+        const navTabs = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const confettiContainer = document.getElementById('confetti-container');
+        const particlesContainer = document.getElementById('particles');
+
+        // Initialize the game
+        function initGame() {
+            loadGameState();
+            updateUI();
+            setupEventListeners();
+            startResetTimer();
+            startLotteryTimer();
+            renderTasks();
+            renderUpgrades();
+            renderTickets();
+            renderTransactions();
+            createParticles();
+        }
+
+        // Create particles for background
+        function createParticles() {
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                particle.style.animationDuration = `${15 + Math.random() * 10}s`;
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Load game state from localStorage
+        function loadGameState() {
+            const savedState = localStorage.getItem('makGameState');
+            if (savedState) {
+                const parsedState = JSON.parse(savedState);
+                Object.assign(gameState, parsedState);
+                
+                // Check if we need to reset daily taps
+                const now = Date.now();
+                const timeSinceReset = now - gameState.lastReset;
+                const twoHours = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+                
+                if (timeSinceReset >= twoHours) {
+                    resetDailyTaps();
+                }
+            }
+        }
+
+        // Save game state to localStorage
+        function saveGameState() {
+            localStorage.setItem('makGameState', JSON.stringify(gameState));
+        }
+
+        // Reset daily taps
+        function resetDailyTaps() {
+            let baseTaps = 100;
+            
+            // Add taps from upgrades
+            if (gameState.upgrades.silver) baseTaps += 2000;
+            if (gameState.upgrades.gold) baseTaps += 5000;
+            if (gameState.upgrades.platinum) baseTaps += 10000;
+            
+            gameState.tapsRemaining = baseTaps;
+            gameState.lastReset = Date.now();
+            saveGameState();
+        }
+
+        // Update UI with current game state
+        function updateUI() {
+            coinBalance.textContent = formatNumber(gameState.coins);
+            usdBalance.textContent = formatUSD(gameState.coins * 0.00006); // 10,000 coins = $0.60
+            tapPower.textContent = gameState.tapPower;
+            tapsRemaining.textContent = gameState.tapsRemaining;
+            totalTaps.textContent = gameState.totalTaps;
+            coinsPerTap.textContent = gameState.coinsPerTap;
+            walletCoins.textContent = formatNumber(gameState.coins);
+            walletUsd.textContent = formatUSD(gameState.coins * 0.00006);
+            
+            // Update lottery ticket count max
+            const maxTickets = 10 - gameState.lotteryTickets.length;
+            if (parseInt(ticketCount.textContent) > maxTickets) {
+                ticketCount.textContent = maxTickets;
+            }
+            
+            updateBuyTicketsButton();
+        }
+
+        // Format number with commas
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // Format USD currency
+        function formatUSD(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Tap circle
+            tapCircle.addEventListener('click', handleTap);
+            
+            // Navigation tabs
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+            
+            // Lottery controls
+            decreaseTickets.addEventListener('click', () => {
+                let count = parseInt(ticketCount.textContent);
+                if (count > 1) {
+                    ticketCount.textContent = count - 1;
+                }
+                updateBuyTicketsButton();
+            });
+            
+            increaseTickets.addEventListener('click', () => {
+                let count = parseInt(ticketCount.textContent);
+                const maxTickets = 10 - gameState.lotteryTickets.length;
+                if (count < maxTickets) {
+                    ticketCount.textContent = count + 1;
+                }
+                updateBuyTicketsButton();
+            });
+            
+            buyTicketsBtn.addEventListener('click', buyLotteryTickets);
+        }
+
+        // Handle tap on the circle
+        function handleTap() {
+            if (gameState.tapsRemaining <= 0) return;
+            
+            // Calculate coins earned
+            const coinsEarned = gameState.coinsPerTap * gameState.tapPower;
+            gameState.coins += coinsEarned;
+            gameState.tapsRemaining--;
+            gameState.totalTaps++;
+            
+            // Add transaction
+            addTransaction('Tap', coinsEarned, 'positive');
+            
+            // Create coin animation
+            createCoinAnimation(coinsEarned);
+            
+            // Save and update UI
+            saveGameState();
+            updateUI();
+            
+            // Add slight shake animation to circle
+            tapCircle.style.animation = 'none';
+            setTimeout(() => {
+                tapCircle.style.animation = 'pulse 3s infinite';
+            }, 10);
+        }
+
+        // Create floating coin animation
+        function createCoinAnimation(amount) {
+            const animation = document.createElement('div');
+            animation.className = 'coin-animation';
+            animation.textContent = `+${formatNumber(amount)}`;
+            animation.style.left = `${Math.random() * 100}%`;
+            tapCircle.parentElement.appendChild(animation);
+            
+            setTimeout(() => {
+                animation.remove();
+            }, 1000);
+        }
+
+        // Switch between tabs
+        function switchTab(tabId) {
+            // Update active tab
+            navTabs.forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabId) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Update active content
+            tabContents.forEach(content => {
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+
+        // Render tasks
+        function renderTasks() {
+            tasksList.innerHTML = '';
+            
+            dailyTasks.forEach(task => {
+                // Check if task is already claimed or completed
+                const isClaimed = gameState.claimedTasks.includes(task.id);
+                const isCompleted = gameState.completedTasks.includes(task.id);
+                
+                if (isCompleted) return; // Skip completed tasks
+                
+                const taskCard = document.createElement('div');
+                taskCard.className = 'task-card';
+                
+                taskCard.innerHTML = `
+                    <div class="task-header">
+                        <h3 class="task-title">${task.title}</h3>
+                        <div class="task-reward">
+                            <i class="fas fa-coins"></i>
+                            <span>${formatNumber(task.reward)}</span>
+                        </div>
+                    </div>
+                    <div class="task-body">
+                        <a href="${task.link}" target="_blank" class="task-link">
+                            <i class="fab fa-youtube"></i>
+                            <span>Watch Video</span>
+                        </a>
+                        <div class="code-input-container">
+                            <input type="text" class="code-input" placeholder="Enter code: ${task.code}" ${isClaimed ? 'disabled' : ''}>
+                            <button class="btn btn-primary claim-btn" ${isClaimed ? 'disabled' : ''}>
+                                <i class="fas fa-gift"></i>
+                                Claim
+                            </button>
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn btn-secondary complete-btn" ${!isClaimed ? 'disabled' : ''}>
+                            <i class="fas fa-check"></i>
+                            Complete
+                        </button>
+                    </div>
+                `;
+                
+                // Add event listeners
+                const claimBtn = taskCard.querySelector('.claim-btn');
+                const completeBtn = taskCard.querySelector('.complete-btn');
+                const codeInput = taskCard.querySelector('.code-input');
+                
+                claimBtn.addEventListener('click', () => {
+                    if (codeInput.value.trim().toUpperCase() === task.code) {
+                        claimTask(task.id, task.reward);
+                        claimBtn.disabled = true;
+                        codeInput.disabled = true;
+                        completeBtn.disabled = false;
+                    } else {
+                        alert('Invalid code! Please try again.');
+                    }
+                });
+                
+                completeBtn.addEventListener('click', () => {
+                    completeTask(task.id);
+                    taskCard.remove();
+                });
+                
+                tasksList.appendChild(taskCard);
+            });
+        }
+
+        // Claim a task
+        function claimTask(taskId, reward) {
+            gameState.claimedTasks.push(taskId);
+            gameState.coins += reward;
+            
+            // Add transaction
+            addTransaction('Task Reward', reward, 'positive');
+            
+            // Create confetti
+            createConfetti();
+            
+            saveGameState();
+            updateUI();
+        }
+
+        // Complete a task
+        function completeTask(taskId) {
+            gameState.completedTasks.push(taskId);
+            saveGameState();
+        }
+
+        // Render upgrades
+        function renderUpgrades() {
+            upgradesGrid.innerHTML = '';
+            
+            upgrades.forEach(upgrade => {
+                const isPurchased = gameState.upgrades[upgrade.id];
+                const canAfford = gameState.coins >= upgrade.cost;
+                
+                const upgradeCard = document.createElement('div');
+                upgradeCard.className = `upgrade-card ${upgrade.id}`;
+                
+                upgradeCard.innerHTML = `
+                    <div class="upgrade-header">
+                        <div class="upgrade-icon">
+                            <i class="${upgrade.icon}"></i>
+                        </div>
+                        <h3 class="upgrade-title">${upgrade.title}</h3>
+                    </div>
+                    <p class="upgrade-benefits">${upgrade.benefits}</p>
+                    <div class="upgrade-cost">
+                        <i class="fas fa-coins"></i>
+                        <span>${formatNumber(upgrade.cost)} coins</span>
+                    </div>
+                    <button class="upgrade-btn" ${isPurchased || !canAfford ? 'disabled' : ''}>
+                        ${isPurchased ? 'Purchased' : 'Purchase'}
+                    </button>
+                `;
+                
+                // Add event listener
+                const upgradeBtn = upgradeCard.querySelector('.upgrade-btn');
+                if (!isPurchased) {
+                    upgradeBtn.addEventListener('click', () => {
+                        purchaseUpgrade(upgrade.id, upgrade.cost, upgrade.tapLimitIncrease);
+                        upgradeBtn.disabled = true;
+                        upgradeBtn.textContent = 'Purchased';
+                    });
+                }
+                
+                upgradesGrid.appendChild(upgradeCard);
+            });
+        }
+
+        // Purchase an upgrade
+        function purchaseUpgrade(upgradeId, cost, tapLimitIncrease) {
+            gameState.upgrades[upgradeId] = true;
+            gameState.coins -= cost;
+            
+            // Increase tap limit
+            gameState.tapsRemaining += tapLimitIncrease;
+            
+            // Add transaction
+            addTransaction(`Upgrade: ${upgradeId}`, -cost, 'negative');
+            
+            saveGameState();
+            updateUI();
+            renderUpgrades();
+        }
+
+        // Update buy tickets button state
+        function updateBuyTicketsButton() {
+            const ticketQuantity = parseInt(ticketCount.textContent);
+            const totalCost = ticketQuantity * 10000;
+            const canAfford = gameState.coins >= totalCost;
+            const maxTickets = 10 - gameState.lotteryTickets.length;
+            
+            buyTicketsBtn.disabled = !canAfford || ticketQuantity > maxTickets;
+            
+            if (ticketQuantity > maxTickets) {
+                ticketCount.textContent = maxTickets;
+            }
+        }
+
+        // Buy lottery tickets
+        function buyLotteryTickets() {
+            const ticketQuantity = parseInt(ticketCount.textContent);
+            const totalCost = ticketQuantity * 10000;
+            
+            if (gameState.coins < totalCost) return;
+            
+            // Deduct coins
+            gameState.coins -= totalCost;
+            
+            // Add transaction
+            addTransaction('Lottery Tickets', -totalCost, 'negative');
+            
+            // Generate tickets
+            for (let i = 0; i < ticketQuantity; i++) {
+                const ticketId = generateTicketId();
+                gameState.lotteryTickets.push({
+                    id: ticketId,
+                    purchased: Date.now()
+                });
+            }
+            
+            // Reset ticket count
+            ticketCount.textContent = '1';
+            
+            saveGameState();
+            updateUI();
+            renderTickets();
+        }
+
+        // Generate a unique 7-digit ticket ID
+        function generateTicketId() {
+            return '#' + Math.floor(1000000 + Math.random() * 9000000);
+        }
+
+        // Render lottery tickets
+        function renderTickets() {
+            ticketsList.innerHTML = '';
+            
+            if (gameState.lotteryTickets.length === 0) {
+                ticketsList.innerHTML = '<p>No tickets purchased yet.</p>';
+                return;
+            }
+            
+            gameState.lotteryTickets.forEach(ticket => {
+                const ticketCard = document.createElement('div');
+                ticketCard.className = 'ticket-card';
+                ticketCard.innerHTML = `
+                    <div class="ticket-id">${ticket.id}</div>
+                `;
+                
+                ticketsList.appendChild(ticketCard);
+            });
+        }
+
+        // Render transactions
+        function renderTransactions() {
+            transactionList.innerHTML = '';
+            
+            if (gameState.transactions.length === 0) {
+                transactionList.innerHTML = '<p>No transactions yet.</p>';
+                return;
+            }
+            
+            // Show only the last 10 transactions
+            const recentTransactions = gameState.transactions.slice(-10).reverse();
+            
+            recentTransactions.forEach(transaction => {
+                const transactionItem = document.createElement('div');
+                transactionItem.className = 'transaction-item';
+                
+                transactionItem.innerHTML = `
+                    <div class="transaction-details">
+                        <div class="transaction-type">${transaction.type}</div>
+                        <div class="transaction-date">${formatDate(transaction.date)}</div>
+                    </div>
+                    <div class="transaction-amount ${transaction.amount >= 0 ? 'positive' : 'negative'}">
+                        <i class="fas fa-coins"></i>
+                        <span>${transaction.amount >= 0 ? '+' : ''}${formatNumber(transaction.amount)}</span>
+                    </div>
+                `;
+                
+                transactionList.appendChild(transactionItem);
+            });
+        }
+
+        // Add a transaction
+        function addTransaction(type, amount, direction) {
+            gameState.transactions.push({
+                type,
+                amount,
+                date: Date.now(),
+                direction
+            });
+            
+            // Keep only the last 50 transactions
+            if (gameState.transactions.length > 50) {
+                gameState.transactions = gameState.transactions.slice(-50);
+            }
+            
+            renderTransactions();
+        }
+
+        // Format date for transactions
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+
+        // Start the reset timer
+        function startResetTimer() {
+            setInterval(() => {
+                const now = Date.now();
+                const timeSinceReset = now - gameState.lastReset;
+                const twoHours = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+                const timeRemaining = twoHours - timeSinceReset;
+                
+                if (timeRemaining <= 0) {
+                    resetDailyTaps();
+                    updateUI();
+                } else {
+                    const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                    
+                    resetTimer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        // Start the lottery timer
+        function startLotteryTimer() {
+            setInterval(() => {
+                const now = Date.now();
+                const timeSinceLastDraw = now - gameState.lastLotteryDraw;
+                const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+                const timeRemaining = twentyFourHours - timeSinceLastDraw;
+                
+                if (timeRemaining <= 0) {
+                    drawLottery();
+                    gameState.lastLotteryDraw = now;
+                    saveGameState();
+                } else {
+                    const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+                    
+                    countdownTimer.textContent = `Next draw in ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        // Draw lottery winners
+        function drawLottery() {
+            if (gameState.lotteryTickets.length === 0) return;
+            
+            // Generate 100 winning ticket IDs (for simulation)
+            const winningTickets = [];
+            for (let i = 0; i < 100; i++) {
+                winningTickets.push(generateTicketId());
+            }
+            
+            // Check if user has any winning tickets
+            const userWinningTickets = gameState.lotteryTickets.filter(ticket => 
+                winningTickets.includes(ticket.id)
+            );
+            
+            if (userWinningTickets.length > 0) {
+                // User won!
+                const winAmount = 100 * userWinningTickets.length;
+                gameState.coins += winAmount * 100000; // Convert $100 to coins (adjust conversion rate as needed)
+                
+                // Add transaction
+                addTransaction('Lottery Win', winAmount * 100000, 'positive');
+                
+                // Highlight winning tickets
+                const ticketCards = document.querySelectorAll('.ticket-card');
+                ticketCards.forEach(card => {
+                    const ticketId = card.querySelector('.ticket-id').textContent;
+                    if (userWinningTickets.some(ticket => ticket.id === ticketId)) {
+                        card.classList.add('winner');
+                    }
+                });
+                
+                // Create confetti
+                createConfetti();
+                
+                alert(`Congratulations! You won $${winAmount} in the lottery!`);
+            }
+            
+            // Clear tickets for next round
+            gameState.lotteryTickets = [];
+            
+            saveGameState();
+            updateUI();
+            renderTickets();
+        }
+
+        // Create confetti animation
+        function createConfetti() {
+            // Clear existing confetti
+            confettiContainer.innerHTML = '';
+            
+            // Create new confetti pieces
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Random position
+                confetti.style.left = `${Math.random() * 100}vw`;
+                
+                // Random color
+                const colors = ['#FFD700', '#00FFAA', '#4A90E2', '#FF6B6B', '#9B59B6', '#00FFFF'];
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Random size
+                const size = Math.random() * 12 + 5;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                
+                // Random rotation
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                // Random shape
+                if (Math.random() > 0.5) {
+                    confetti.style.borderRadius = '50%';
+                } else {
+                    confetti.style.borderRadius = '0';
+                }
+                
+                // Animation
+                confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+                
+                confettiContainer.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+            
+            // Add CSS for fall animation
+            if (!document.querySelector('#confetti-fall')) {
+                const style = document.createElement('style');
+                style.id = 'confetti-fall';
+                style.textContent = `
+                    @keyframes fall {
+                        0% {
+                            transform: translateY(-100px) rotate(0deg);
+                            opacity: 1;
+                        }
+                        100% {
+                            transform: translateY(100vh) rotate(360deg);
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Initialize the game when the page loads
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
