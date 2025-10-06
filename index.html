@@ -2182,7 +2182,7 @@
             tapPower: 1,
             tapsRemaining: 100,
             totalTaps: 0,
-            coinsPerTap: 10,
+            coinsPerTap: 1,
             lastReset: Date.now(),
             upgrades: {
                 silver: false,
@@ -2200,6 +2200,14 @@
             referralEarnings: 0
         };
 
+        // Batch saving variables - UPDATED: 12-hour auto-save
+        let tapCounter = 0;
+        let pendingCoins = 0;
+        let pendingTaps = 0;
+        let autoSaveThreshold = 5000; // Save every 5000 taps
+        let lastSaveTime = Date.now();
+        let autoSaveInterval = 43200000; // CHANGED: 12 hours in milliseconds (12 * 60 * 60 * 1000)
+
         // Daily Tasks
         const dailyTasks = [
             { 
@@ -2207,7 +2215,7 @@
                 title: "Watch MAK Video 1", 
                 link: "https://youtu.be/EG6iozjGBtI?feature=shared", 
                 code: "MAK10", 
-                reward: 8000,
+                reward: 5000,
                 claimed: false,
                 completed: false
             },
@@ -2216,7 +2224,7 @@
                 title: "Watch MAK Video 2", 
                 link: "https://youtu.be/9VvweaLEWxc?feature=shared", 
                 code: "MAK20", 
-                reward: 8000,
+                reward: 5000,
                 claimed: false,
                 completed: false
             },
@@ -2225,7 +2233,7 @@
                 title: "watch video 0.1", 
                 link: "https://youtu.be/8gkg0QhUKs8?feature=shared", 
                 code: "MAK123", 
-                reward: 8000,
+                reward: 5000,
                 claimed: false,
                 completed: false
             },
@@ -2234,7 +2242,7 @@
                 title: "video num 0.2", 
                 link: "https://youtu.be/wg-_m02qGNk?feature=shared", 
                 code: "MAK213",
-                reward: 8000,
+                reward: 5000,
                 claimed: false,
                 completed: false
             },
@@ -2243,7 +2251,7 @@
                 title: "be num 3", 
                 link: "https://youtu.be/s8zODepl9TA?si=1sswVQtke9d9fah1", 
                 code: "MAK3", 
-                reward: 8000,
+                reward: 5000,
                 claimed: false,
                 completed: false
             },
@@ -2252,7 +2260,7 @@
                 title: "2 is more then 1", 
                 link: "https://youtu.be/VncSBFygK1g?feature=shared", 
                 code: "MAK212", 
-                reward: 8000,
+                reward: 5000,
                 claimed: false,
                 completed: false
             },
@@ -2261,7 +2269,7 @@
                 title: "DO HOME WORK", 
                 link: "https://youtu.be/NtK0fytJFPI?feature=shared", 
                 code: "STUDY", 
-                reward: 8000,
+                reward: 5000,
                 claimed: false,
                 completed: false
             }
@@ -2273,25 +2281,25 @@
                 id: 'silver',
                 title: 'Silver Upgrade',
                 icon: 'fas fa-medal',
-                benefits: '+2,000 daily tap limit',
+                benefits: '+250 2 hours tap limit',
                 cost: 50000,
-                tapLimitIncrease: 2000
+                tapLimitIncrease: 250
             },
             {
                 id: 'gold',
                 title: 'Gold Upgrade',
                 icon: 'fas fa-crown',
-                benefits: '+5,000 daily tap limit',
+                benefits: '+500 2 hours tap limit',
                 cost: 150000,
-                tapLimitIncrease: 5000
+                tapLimitIncrease: 500
             },
             {
                 id: 'platinum',
                 title: 'Platinum Upgrade',
                 icon: 'fas fa-gem',
-                benefits: '+10,000 daily tap limit',
+                benefits: '+1000  2 hours tap limit',
                 cost: 300000,
-                tapLimitIncrease: 10000
+                tapLimitIncrease: 1000
             }
         ];
 
@@ -2352,6 +2360,7 @@
         let selectedTickets = 0;
         let tapResetTimer = null;
         let lotteryDrawTimer = null;
+        let autoSaveTimer = null;
 
         // Initialize the game
         function initGame() {
@@ -2413,6 +2422,17 @@
 
             // Invite events
             copyInviteLink.addEventListener('click', copyInviteLinkToClipboard);
+
+            // Save on page unload
+            window.addEventListener('beforeunload', handlePageUnload);
+        }
+
+        // Handle page unload
+        function handlePageUnload() {
+            if (tapCounter > 0) {
+                // Try to save synchronously (may not work in all browsers)
+                forceSave().catch(console.error);
+            }
         }
 
         // Check authentication state
@@ -2447,6 +2467,7 @@
                 // Start game timers
                 startResetTimer();
                 startLotteryTimer();
+                startAutoSaveTimer();
                 
                 // Render UI components
                 renderTasks();
@@ -2726,19 +2747,34 @@
             
             // Calculate coins earned
             const coinsEarned = gameState.coinsPerTap * gameState.tapPower;
+            
+            // Update local state immediately
             gameState.coins += coinsEarned;
             gameState.tapsRemaining--;
             gameState.totalTaps++;
             
-            // Add transaction
-            addTransaction('Tap', coinsEarned, 'positive');
+            // Update UI immediately for smooth user experience
+            updateUI();
             
             // Create coin animation
             createCoinAnimation(coinsEarned);
             
-            // Save to Firestore
-            await saveGameState();
-            updateUI();
+            // Track pending saves
+            pendingCoins += coinsEarned;
+            pendingTaps++;
+            tapCounter++;
+            
+            // Add transaction to local array (but don't save to Firebase yet)
+            addTransaction('Tap', coinsEarned, 'positive', false);
+            
+            // Save to Firebase conditionally - UPDATED: Now uses 12-hour interval
+            if (tapCounter >= autoSaveThreshold || (Date.now() - lastSaveTime) >= autoSaveInterval) {
+                await saveGameState();
+                tapCounter = 0;
+                pendingCoins = 0;
+                pendingTaps = 0;
+                lastSaveTime = Date.now();
+            }
             
             // Add slight shake animation to circle
             tapCircle.style.animation = 'none';
@@ -2765,21 +2801,62 @@
             if (!user) return;
             
             try {
-                await db.collection('users').doc(user.uid).update({
-                    coins: gameState.coins,
+                const updateData = {
                     tapsRemaining: gameState.tapsRemaining,
-                    totalTaps: gameState.totalTaps,
                     lastReset: gameState.lastReset,
                     upgrades: gameState.upgrades,
                     claimedTasks: gameState.claimedTasks,
                     completedTasks: gameState.completedTasks,
                     lotteryTickets: gameState.lotteryTickets,
                     lastLotteryDraw: gameState.lastLotteryDraw,
-                    transactions: gameState.transactions
-                });
+                    transactions: gameState.transactions,
+                    lastSave: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                // Only increment coins and totalTaps if we have pending changes
+                if (pendingCoins > 0) {
+                    updateData.coins = firebase.firestore.FieldValue.increment(pendingCoins);
+                } else {
+                    updateData.coins = gameState.coins;
+                }
+
+                if (pendingTaps > 0) {
+                    updateData.totalTaps = firebase.firestore.FieldValue.increment(pendingTaps);
+                } else {
+                    updateData.totalTaps = gameState.totalTaps;
+                }
+
+                await db.collection('users').doc(user.uid).update(updateData);
+                
+                console.log(`Saved ${pendingTaps} taps and ${pendingCoins} coins to Firebase`);
+                
             } catch (error) {
                 console.error('Error saving game state:', error);
+                // If save fails, we still have the data in gameState
             }
+        }
+
+        // Force immediate save
+        async function forceSave() {
+            await saveGameState();
+            tapCounter = 0;
+            pendingCoins = 0;
+            pendingTaps = 0;
+            lastSaveTime = Date.now();
+        }
+
+        // Start auto-save timer - UPDATED: Now 12 hours
+        function startAutoSaveTimer() {
+            autoSaveTimer = setInterval(async () => {
+                if (user && tapCounter > 0) {
+                    await saveGameState();
+                    tapCounter = 0;
+                    pendingCoins = 0;
+                    pendingTaps = 0;
+                    lastSaveTime = Date.now();
+                    console.log('Auto-saved game state (12-hour backup)');
+                }
+            }, autoSaveInterval); // Now 12 hours
         }
 
         // Update UI with current game state
@@ -2792,6 +2869,13 @@
             coinsPerTap.textContent = gameState.coinsPerTap;
             walletCoins.textContent = formatNumber(gameState.coins);
             walletUsd.textContent = formatUSD(gameState.coins * 0.00006);
+            
+            // Show unsaved progress indicator
+            if (tapCounter > 0) {
+                document.title = `MAK Tap-to-Earn (${tapCounter} unsaved)`; 
+            } else {
+                document.title = 'MAK Tap-to-Earn';
+            }
             
             // Update lottery ticket count max
             const maxTickets = 10 - gameState.lotteryTickets.length;
@@ -2915,7 +2999,8 @@
             // Create confetti
             createConfetti();
             
-            await saveGameState();
+            // Force save for important actions
+            await forceSave();
             updateUI();
             showToast(`Task claimed! +${formatNumber(reward)} coins`, 'success');
         }
@@ -2923,7 +3008,7 @@
         // Complete a task
         async function completeTask(taskId) {
             gameState.completedTasks.push(taskId);
-            await saveGameState();
+            await forceSave();
             showToast('Task completed!', 'success');
         }
 
@@ -2980,7 +3065,9 @@
             // Add transaction
             addTransaction(`Upgrade: ${upgradeId}`, -cost, 'negative');
             
-            await saveGameState();
+            // Force immediate save for important purchases
+            await forceSave();
+            
             updateUI();
             renderUpgrades();
             showToast('Upgrade purchased successfully!', 'success');
@@ -3008,11 +3095,7 @@
             
             if (gameState.coins < totalCost) return;
             
-            // Deduct coins
             gameState.coins -= totalCost;
-            
-            // Add transaction
-            addTransaction('Lottery Tickets', -totalCost, 'negative');
             
             // Generate tickets
             for (let i = 0; i < ticketQuantity; i++) {
@@ -3026,7 +3109,9 @@
             // Reset ticket count
             ticketCount.textContent = '1';
             
-            await saveGameState();
+            // Force immediate save for purchases
+            await forceSave();
+            
             updateUI();
             renderTickets();
             showToast(`Purchased ${ticketQuantity} lottery tickets!`, 'success');
@@ -3089,7 +3174,7 @@
         }
 
         // Add a transaction
-        function addTransaction(type, amount, direction) {
+        function addTransaction(type, amount, direction, immediateSave = false) {
             gameState.transactions.push({
                 type,
                 amount,
@@ -3102,7 +3187,10 @@
                 gameState.transactions = gameState.transactions.slice(-50);
             }
             
-            renderTransactions();
+            // Only save transactions immediately if requested
+            if (immediateSave) {
+                renderTransactions();
+            }
         }
 
         // Format date for transactions
@@ -3157,7 +3245,7 @@
             
             gameState.tapsRemaining = baseTaps;
             gameState.lastReset = Date.now();
-            saveGameState();
+            forceSave();
         }
 
         // Start the lottery timer
@@ -3171,7 +3259,7 @@
                 if (timeRemaining <= 0) {
                     drawLottery();
                     gameState.lastLotteryDraw = now;
-                    saveGameState();
+                    forceSave();
                 } else {
                     const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
                     const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
@@ -3223,7 +3311,7 @@
             // Clear tickets for next round
             gameState.lotteryTickets = [];
             
-            saveGameState();
+            forceSave();
             updateUI();
             renderTickets();
         }
