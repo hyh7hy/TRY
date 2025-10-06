@@ -2521,7 +2521,6 @@
                     // Update local data
                     gameState.referredBy = referrerId;
                     gameState.coins += 40000;
-                    gameState.referralEarnings += 40000;
                     
                     updateUI();
                     updateInviteInfo();
@@ -3114,7 +3113,7 @@
 
         // Update invite information
         function updateInviteInfo() {
-            inviteLink.textContent = `https://maktap.com/?ref=${gameState.inviteCode}`;
+            inviteLink.textContent = `${window.location.origin}${window.location.pathname}?ref=${gameState.inviteCode}`;
             invitesCount.textContent = gameState.invitesCount;
             referralEarnings.textContent = formatNumber(gameState.referralEarnings);
         }
