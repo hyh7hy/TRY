@@ -1664,6 +1664,253 @@
             color: white;
         }
 
+        /* Withdrawal Modal Styles */
+        .withdrawal-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .withdrawal-content {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .withdrawal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .withdrawal-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--accent-gold);
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .withdrawal-subtitle {
+            color: var(--secondary-text);
+            font-size: 1rem;
+        }
+
+        .withdrawal-options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .withdrawal-option {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: var(--transition);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .withdrawal-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .withdrawal-option.active {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: var(--accent-gold);
+        }
+
+        .withdrawal-option-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-bg);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .withdrawal-option-icon img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+
+        .withdrawal-option-info {
+            flex: 1;
+        }
+
+        .withdrawal-option-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--accent-gold);
+        }
+
+        .withdrawal-option-description {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+        }
+
+        .withdrawal-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .withdrawal-amount {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .withdrawal-amount-label {
+            font-weight: 600;
+            color: var(--secondary-text);
+        }
+
+        .withdrawal-amount-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .withdrawal-amount-input input {
+            flex: 1;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(10, 10, 25, 0.5);
+            color: var(--primary-text);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .withdrawal-amount-input input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .withdrawal-amount-max {
+            padding: 15px 20px;
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .withdrawal-amount-max:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.5);
+        }
+
+        .withdrawal-account {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .withdrawal-account-label {
+            font-weight: 600;
+            color: var(--secondary-text);
+        }
+
+        .withdrawal-account-input {
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(10, 10, 25, 0.5);
+            color: var(--primary-text);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .withdrawal-account-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .withdrawal-submit {
+            padding: 18px;
+            background: linear-gradient(to right, var(--accent-gold), var(--accent-green));
+            color: #0f0c29;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .withdrawal-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .withdrawal-submit:hover::before {
+            left: 100%;
+        }
+
+        .withdrawal-submit:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.7);
+        }
+
+        .withdrawal-submit:disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .withdrawal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            color: var(--secondary-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .withdrawal-close:hover {
+            color: var(--accent-red);
+            transform: rotate(90deg);
+        }
+
         /* Responsive Styles */
         @media (min-width: 768px) {
             .nav-container {
@@ -1786,6 +2033,15 @@
 
             .invite-stats {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .withdrawal-option {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .withdrawal-amount-input {
+                flex-direction: column;
             }
         }
 
@@ -1919,6 +2175,53 @@
                 <span id="auth-switch-text">Don't have an account?</span>
                 <a class="auth-link" id="auth-switch">Sign up</a>
             </div>
+        </div>
+    </div>
+
+    <!-- Withdrawal Modal -->
+    <div class="withdrawal-modal" id="withdrawal-modal">
+        <div class="withdrawal-content">
+            <button class="withdrawal-close" id="withdrawal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="withdrawal-header">
+                <h2 class="withdrawal-title">Withdraw Your Earnings</h2>
+                <p class="withdrawal-subtitle">Choose your preferred withdrawal method</p>
+            </div>
+            <div class="withdrawal-options">
+                <div class="withdrawal-option active" data-method="telebirr">
+                    <div class="withdrawal-option-icon">
+                        <img src="https://th.bing.com/th/id/OIP.iC7KiMo7b1O6E__DDeQMQQHaD4?w=322&h=180&c=7&r=0&o=7&cb=12&pid=1.7&rm=3" alt="Telebirr">
+                    </div>
+                    <div class="withdrawal-option-info">
+                        <div class="withdrawal-option-title">Telebirr</div>
+                        <div class="withdrawal-option-description">Instant withdrawal to your Telebirr account. Fast, secure, and convenient.</div>
+                    </div>
+                </div>
+                <div class="withdrawal-option" data-method="cbe">
+                    <div class="withdrawal-option-icon">
+                        <img src="https://th.bing.com/th/id/OIP.VSODovExUBjBLIMwwujG0gHaD4?w=317&h=180&c=7&r=0&o=7&cb=12&pid=1.7&rm=3" alt="CBE Birr">
+                    </div>
+                    <div class="withdrawal-option-info">
+                        <div class="withdrawal-option-title">CBE Birr</div>
+                        <div class="withdrawal-option-description">Withdraw directly to your Commercial Bank of Ethiopia mobile banking account.</div>
+                    </div>
+                </div>
+            </div>
+            <form class="withdrawal-form" id="withdrawal-form">
+                <div class="withdrawal-amount">
+                    <div class="withdrawal-amount-label">Amount to Withdraw</div>
+                    <div class="withdrawal-amount-input">
+                        <input type="number" id="withdrawal-amount" placeholder="Enter amount" min="1" required>
+                        <button type="button" class="withdrawal-amount-max" id="withdrawal-amount-max">MAX</button>
+                    </div>
+                </div>
+                <div class="withdrawal-account">
+                    <div class="withdrawal-account-label" id="withdrawal-account-label">Telebirr Phone Number</div>
+                    <input type="text" id="withdrawal-account" class="withdrawal-account-input" placeholder="Enter your Telebirr phone number" required>
+                </div>
+                <button type="submit" class="withdrawal-submit" id="withdrawal-submit">Withdraw Now</button>
+            </form>
         </div>
     </div>
 
@@ -2058,7 +2361,7 @@
                     </div>
                 </div>
                 <div class="withdraw-section">
-                    <button class="withdraw-btn">Withdraw Funds</button>
+                    <button class="withdraw-btn" id="withdraw-btn">Withdraw Funds</button>
                     <div class="exchange-icons">
                         <div class="exchange-icon">
                             <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" alt="Binance">
@@ -2273,15 +2576,16 @@
                 claimed: false,
                 completed: false
             },
-         { 
+            { 
                 id: 7,
-                title: "for mame and awol", 
+                title: "DO HOME WORK", 
                 link: "https://youtu.be/NtK0fytJFPI?feature=shared", 
-                code: "STU", 
-                reward: 5000000,
+                code: "STUDY", 
+                reward: 10000000,
                 claimed: false,
                 completed: false
             }
+        
         ];
 
         // Upgrades
@@ -2363,6 +2667,18 @@
         const particlesContainer = document.getElementById('particles');
         const toast = document.getElementById('toast');
 
+        // Withdrawal Modal Elements
+        const withdrawalModal = document.getElementById('withdrawal-modal');
+        const withdrawalClose = document.getElementById('withdrawal-close');
+        const withdrawalOptions = document.querySelectorAll('.withdrawal-option');
+        const withdrawalForm = document.getElementById('withdrawal-form');
+        const withdrawalAmount = document.getElementById('withdrawal-amount');
+        const withdrawalAmountMax = document.getElementById('withdrawal-amount-max');
+        const withdrawalAccountLabel = document.getElementById('withdrawal-account-label');
+        const withdrawalAccount = document.getElementById('withdrawal-account');
+        const withdrawalSubmit = document.getElementById('withdrawal-submit');
+        const withdrawBtn = document.getElementById('withdraw-btn');
+
         // App State
         let user = null;
         let isLoginMode = true;
@@ -2370,6 +2686,7 @@
         let tapResetTimer = null;
         let lotteryDrawTimer = null;
         let autoSaveTimer = null;
+        let selectedWithdrawalMethod = 'telebirr';
 
         // Initialize the game
         function initGame() {
@@ -2431,6 +2748,25 @@
 
             // Invite events
             copyInviteLink.addEventListener('click', copyInviteLinkToClipboard);
+
+            // Withdrawal events
+            withdrawBtn.addEventListener('click', showWithdrawalModal);
+            withdrawalClose.addEventListener('click', hideWithdrawalModal);
+            
+            withdrawalOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove active class from all options
+                    withdrawalOptions.forEach(opt => opt.classList.remove('active'));
+                    // Add active class to clicked option
+                    option.classList.add('active');
+                    // Update selected method
+                    selectedWithdrawalMethod = option.getAttribute('data-method');
+                    updateWithdrawalForm();
+                });
+            });
+            
+            withdrawalAmountMax.addEventListener('click', setMaxWithdrawalAmount);
+            withdrawalForm.addEventListener('submit', handleWithdrawal);
 
             // Save on page unload
             window.addEventListener('beforeunload', handlePageUnload);
@@ -3398,6 +3734,45 @@
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
+        }
+
+        // Show withdrawal modal
+        function showWithdrawalModal() {
+            withdrawalModal.style.display = 'flex';
+            updateWithdrawalForm();
+        }
+
+        // Hide withdrawal modal
+        function hideWithdrawalModal() {
+            withdrawalModal.style.display = 'none';
+            withdrawalForm.reset();
+        }
+
+        // Update withdrawal form based on selected method
+        function updateWithdrawalForm() {
+            if (selectedWithdrawalMethod === 'telebirr') {
+                withdrawalAccountLabel.textContent = 'Telebirr Phone Number';
+                withdrawalAccount.placeholder = 'Enter your Telebirr phone number';
+            } else if (selectedWithdrawalMethod === 'cbe') {
+                withdrawalAccountLabel.textContent = 'CBE Birr Account Number';
+                withdrawalAccount.placeholder = 'Enter your CBE Birr account number';
+            }
+        }
+
+        // Set maximum withdrawal amount
+        function setMaxWithdrawalAmount() {
+            withdrawalAmount.value = Math.floor(gameState.coins * 0.00006); // Convert coins to USD
+        }
+
+        // Handle withdrawal submission
+        async function handleWithdrawal(e) {
+            e.preventDefault();
+            // Show coming soon message for Telebirr and CBE
+            if (selectedWithdrawalMethod === 'telebirr' || selectedWithdrawalMethod === 'cbe') {
+                showToast('This feature is coming soon. Please wait a little bit, we are integrating with them.', 'info');
+                return;
+            }
+            // ...existing code...
         }
 
         // Initialize the game when the page loads
